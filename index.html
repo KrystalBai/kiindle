@@ -397,7 +397,7 @@
 						getChapterInfoPromise().then(function(d){
 							return getChapterContentPromise();
 							}).then(function(data){
-								UIcallback&&UIcallback();
+								UIcallback&&UIcallback(data);
 							});
 						};
 						// getChapterInfo(function(){

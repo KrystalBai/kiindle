@@ -52,6 +52,7 @@
 			    border-right:1px solid #858382;
 			    text-align:center;
 			    color:#fff;
+			    cursor: pointer;
 			}
 			.u_tab li:nth-child(2){
 			    border-right:none;
@@ -412,7 +413,7 @@
 					}
 					var prevChapter=function(UIcallback){
 						chapter_id=parseInt(chapter_id,10);
-						if(chapter_id==0){
+						if(chapter_id==1){
 							return;
 						}
 						chapter_id-=1;
@@ -420,7 +421,7 @@
 					}
 					var nextChapter=function(UIcallback){
 						chapter_id=parseInt(chapter_id,10);
-						if(chapter_id==totalChapter){
+						if(chapter_id==3){
 							return;
 						}
 						chapter_id+=1;

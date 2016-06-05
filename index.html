@@ -351,7 +351,8 @@
 					bgCurrent=Util.StorageGetter('bgColor'),
 					index=parseInt(Util.StorageGetter('index')),
 					initFontSize=parseInt(Util.StorageGetter('font_size')),
-					isNightMode=parseInt(Util.StorageGetter('isNightMode'));
+					isNightMode=parseInt(Util.StorageGetter('isNightMode')),
+					cid=parseInt(Util.StorageGetter('cid'));
 					initFontSize=!initFontSize?14:initFontSize;
 					bgCurrent=!bgCurrent?'#e9dfc7':bgCurrent;
 					index=!index?'2':index;
@@ -396,7 +397,7 @@
 					}
 					var getChapterInfo=function(callback){
 						$.get('./data/chapter.json',function(data){
-							chapter_id=data.chapters[1].chapter_id;
+							chapter_id=cid;
 							totalChapter=data.chapters.length;
 							callback&&callback();
 						},'json');
@@ -418,6 +419,7 @@
 						}
 						chapter_id-=1;
 						getChapterContent(chapter_id,UIcallback);
+						Util.StorageSetter('cid',chapter_id);
 					}
 					var nextChapter=function(UIcallback){
 						chapter_id=parseInt(chapter_id,10);
@@ -426,6 +428,7 @@
 						}
 						chapter_id+=1;
 						getChapterContent(chapter_id,UIcallback);
+						Util.StorageSetter('cid',chapter_id);
 					}
 					return {
 						init:init,

@@ -301,6 +301,9 @@
 
 		<script>
 			(function(){
+				//闭包最开始做一个声明，以便在代码中使用ES6特性
+				'use strict';
+
 				var Util=(function(){
 					var prefix='kiindle';
 					var StorageGetter =function(key){
@@ -390,29 +393,62 @@
 				function KiindleModel(){
 					var chapter_id,totalChapter;
 					var init=function(UIcallback){
-						getChapterInfo(function(){
-							getChapterContent(chapter_id,function(data){
-								UIcallback&&UIcallback(data);
+						getChapterInfoPromise().then(function(d){
+							return getChapterContentPromise();
+							}).then(function(data){
+								UIcallback&&UIcallback();
 							});
-						})
+						};
+						// getChapterInfo(function(){
+						// 	getChapterContent(chapter_id,function(data){
+						// 		UIcallback&&UIcallback(data);
+						// 	});
+						// })
 					}
-					var getChapterInfo=function(callback){
+					var getChapterInfoPromise=function(){
+						return new Promise(function(resolve,reject){
 						$.get('./data/chapter.json',function(data){
-							chapter_id=cid;
-							totalChapter=data.chapters.length;
-							callback&&callback();
+							if(data.result==0){
+								chapter_id=cid;
+								totalChapter=data.chapters.length;
+								resolve();
+							}else{
+								reject({msg:"fail"});
+							}
 						},'json');
+						});
 					}
-					var getChapterContent=function(chapter_id,callback){
-						$.get('./data/data'+chapter_id+'.json',function(data){
+					// var getChapterInfo=function(callback){
+					// 	$.get('./data/chapter.json',function(data){
+					// 		chapter_id=cid;
+					// 		totalChapter=data.chapters.length;
+					// 		callback&&callback();
+					// 	},'json');
+					// }
+					var getChapterContentPromise=function(){
+						return new Promise(function(resolve,reject){
+						$.get('./data/data'+cid+'.json',function(data){
 							if(data.result==0){
 								var url=data.jsonp;
 								Util.getJSONP(url,function(data){
-									callback&&callback(data);
+									resolve(data);
 								});
+							}else{
+								reject({msg:'fail'});
 							}
 						},'json');
+						});
 					}
+					// var getChapterContent=function(chapter_id,callback){
+					// 	$.get('./data/data'+chapter_id+'.json',function(data){
+					// 		if(data.result==0){
+					// 			var url=data.jsonp;
+					// 			Util.getJSONP(url,function(data){
+					// 				callback&&callback(data);
+					// 			});
+					// 		}
+					// 	},'json');
+					// }
 					var prevChapter=function(UIcallback){
 						chapter_id=parseInt(chapter_id,10);
 						if(chapter_id==1){

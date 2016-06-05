@@ -394,7 +394,7 @@
 						})
 					}
 					var getChapterInfo=function(callback){
-						$.get('/data/chapter.json',function(data){
+						$.get('./data/chapter.json',function(data){
 							chapter_id=data.chapters[1].chapter_id;
 							callback&&callback();
 						},'json');

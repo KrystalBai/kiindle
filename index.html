@@ -342,6 +342,8 @@
 				};
 
 				var win=$(window),
+					kiindleModel,
+					readerUI,
 					chapterContainer=$('#chapter_container'),
 					bgColor=['#f7eee5','#e9dfc7','#a4a4a4','#cdefce','#283548'],
 					body=$('body'),
@@ -374,8 +376,8 @@
 
 
 				function main(){
-					var kiindleModel=KiindleModel();
-					var readerUI=KiindleBaseFrame(chapterContainer);
+					kiindleModel=KiindleModel();
+					readerUI=KiindleBaseFrame(chapterContainer);
 					kiindleModel.init(function(data){
 						readerUI(data);
 					});
@@ -383,7 +385,7 @@
 				}
 
 				function KiindleModel(){
-					var chapter_id;
+					var chapter_id,totalChapter;
 					var init=function(UIcallback){
 						getChapterInfo(function(){
 							getChapterContent(chapter_id,function(data){
@@ -394,6 +396,7 @@
 					var getChapterInfo=function(callback){
 						$.get('./data/chapter.json',function(data){
 							chapter_id=data.chapters[1].chapter_id;
+							totalChapter=data.chapters.length;
 							callback&&callback();
 						},'json');
 					}
@@ -407,10 +410,28 @@
 							}
 						},'json');
 					}
-					return {
-						init:init
+					var prevChapter=function(UIcallback){
+						chapter_id=parseInt(chapter_id,10);
+						if(chapter_id==0){
+							return;
+						}
+						chapter_id-=1;
+						getChapterContent(chapter_id,UIcallback);
 					}
-				}
+					var nextChapter=function(UIcallback){
+						chapter_id=parseInt(chapter_id,10);
+						if(chapter_id==totalChapter){
+							return;
+						}
+						chapter_id+=1;
+						getChapterContent(chapter_id,UIcallback);
+					}
+					return {
+						init:init,
+						prevChapter:prevChapter,
+						nextChapter:nextChapter
+					}
+				} 
 				function KiindleBaseFrame(container){
 					function parseChapterData(jsonData){
 						var jsonObj=JSON.parse(jsonData);
@@ -495,6 +516,17 @@
 						$(this).find('div').addClass('bg_current');
 						Util.StorageSetter('bgColor',bgColor[index]);
 						Util.StorageSetter('index',index+1);
+					});
+
+					$('#prev_button').click(function(){
+						kiindleModel.prevChapter(function(){
+							readerUI(data);
+						});
+					});
+					$('#next_button').click(function(){
+						KiindleModel.nextChapter(function(data){
+							readerUI(data);
+						});
 					});
 				}
 				main();

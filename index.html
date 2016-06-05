@@ -302,21 +302,21 @@
 		<script>
 			(function(){
 				//闭包最开始做一个声明，以便在代码中使用ES6特性
-				'use strict';
+				"use strict";
 
 				var Util=(function(){
-					var prefix='kiindle';
+					var prefix="kiindle";
 					var StorageGetter =function(key){
 						return localStorage.getItem(prefix+key);
-					}
+					};
 					var StorageSetter=function(key,val){
 						return localStorage.setItem(prefix+key,val)
-					}
+					};
 					var getJSONP=function(url,callback){
 						return $.jsonp({
 							url:url,
 							cache:true,
-							callback:'duokan_fiction_chapter',
+							callback:"duokan_fiction_chapter",
 							success:function(result){
 								debugger
 								var data=$.base64.decode(result);
@@ -324,7 +324,7 @@
 								callback(json);
 							}
 						});
-					}
+					};
 					return {
 						getJSONP:getJSONP,
 						StorageSetter:StorageSetter,
@@ -333,39 +333,40 @@
 				})();
 
 				var dom={
-					topNav:$('.top_nav'),
-					bottomNav:$('.bottom_nav'),
-					navPanel:$('.nav_panel'),
-					fontStyle:$('.fontStyle'),
-					fontIcon:$('.icon_fontStyle'),
-					nightMode:$('.nightMode'),
-					nightModeIcon:$('.icon_nightMode'),
-					nightTitle:$('.title_nightMode'),
-					dayModeIcon:$('.icon_dayMode'),
-					dayTitle:$('.title_dayMode')
+					topNav:$(".top_nav"),
+					bottomNav:$(".bottom_nav"),
+					navPanel:$(".nav_panel"),
+					fontStyle:$(".fontStyle"),
+					fontIcon:$(".icon_fontStyle"),
+					nightMode:$(".nightMode"),
+					nightModeIcon:$(".icon_nightMode"),
+					nightTitle:$(".title_nightMode"),
+					dayModeIcon:$(".icon_dayMode"),
+					dayTitle:$(".title_dayMode")
 				};
 
 				var win=$(window),
 					kiindleModel,
 					readerUI,
-					chapterContainer=$('#chapter_container'),
-					bgColor=['#f7eee5','#e9dfc7','#a4a4a4','#cdefce','#283548'],
-					body=$('body'),
-					bgCurrent=Util.StorageGetter('bgColor'),
-					index=parseInt(Util.StorageGetter('index')),
-					initFontSize=parseInt(Util.StorageGetter('font_size')),
-					isNightMode=parseInt(Util.StorageGetter('isNightMode')),
-					cid=parseInt(Util.StorageGetter('cid'));
+					chapter_id,
+					chapterContainer=$("#chapter_container"),
+					bgColor=["#f7eee5","#e9dfc7","#a4a4a4","#cdefce","#283548"],
+					body=$("body"),
+					bgCurrent=Util.StorageGetter("bgColor"),
+					index=parseInt(Util.StorageGetter("index")),
+					initFontSize=parseInt(Util.StorageGetter("font_size")),
+					isNightMode=parseInt(Util.StorageGetter("isNightMode")),
+					cid=parseInt(Util.StorageGetter("cid"));
 					initFontSize=!initFontSize?14:initFontSize;
-					bgCurrent=!bgCurrent?'#e9dfc7':bgCurrent;
-					index=!index?'2':index;
+					bgCurrent=!bgCurrent?"#e9dfc7":bgCurrent;
+					index=!index?"2":index;
 					cid=!cid?1:cid;
-					chapterContainer.css('font-size',initFontSize);
-					body.css('background-color',bgCurrent);
+					chapterContainer.css("font-size",initFontSize);
+					body.css("background-color",bgCurrent);
 
 
 					if(isNightMode){
-						body.css('background-color','rgb(15,20,16)');
+						body.css("background-color","rgb(15,20,16)");
 						dom.dayModeIcon.show();
 						dom.dayTitle.show();
 						dom.nightModeIcon.hide();
@@ -377,8 +378,8 @@
 						dom.nightTitle.show();
 					}
 					
-					$('.child_mod').find('.bg_current').removeClass('bg_current');
-					$('.bg_container.c'+index).find('div').addClass('bg_current');
+					$(".child_mod").find(".bg_current").removeClass("bg_current");
+					$(".bg_container.c"+index).find("div").addClass("bg_current");
 
 
 				function main(){
@@ -391,7 +392,7 @@
 				}
 
 				function KiindleModel(){
-					var chapter_id,totalChapter;
+					var totalChapter;
 					var init=function(UIcallback){
 						getChapterInfoPromise().then(function(d){
 							return getChapterContentPromise();
@@ -406,7 +407,7 @@
 						// })
 					var getChapterInfoPromise=function(){
 						return new Promise(function(resolve,reject){
-						$.get('./data/chapter.json',function(data){
+						$.get("./data/chapter.json",function(data){
 							if(data.result==0){
 								chapter_id=cid;
 								totalChapter=data.chapters.length;
@@ -414,39 +415,39 @@
 							}else{
 								reject({msg:"fail"});
 							}
-						},'json');
+						},"json");
 						});
-					}
+					};
 					// var getChapterInfo=function(callback){
-					// 	$.get('./data/chapter.json',function(data){
+					// 	$.get("./data/chapter.json",function(data){
 					// 		chapter_id=cid;
 					// 		totalChapter=data.chapters.length;
 					// 		callback&&callback();
-					// 	},'json');
+					// 	},"json");
 					// }
 					var getChapterContentPromise=function(){
 						return new Promise(function(resolve,reject){
-						$.get('./data/data'+cid+'.json',function(data){
+						$.get("./data/data"+chapter_id+".json",function(data){
 							if(data.result==0){
 								var url=data.jsonp;
 								Util.getJSONP(url,function(data){
 									resolve(data);
 								});
 							}else{
-								reject({msg:'fail'});
+								reject({msg:"fail"});
 							}
-						},'json');
+						},"json");
 						});
-					}
+					};
 					// var getChapterContent=function(chapter_id,callback){
-					// 	$.get('./data/data'+chapter_id+'.json',function(data){
+					// 	$.get("./data/data"+chapter_id+".json",function(data){
 					// 		if(data.result==0){
 					// 			var url=data.jsonp;
 					// 			Util.getJSONP(url,function(data){
 					// 				callback&&callback(data);
 					// 			});
 					// 		}
-					// 	},'json');
+					// 	},"json");
 					// }
 					var prevChapter=function(UIcallback){
 						chapter_id=parseInt(chapter_id,10);
@@ -454,18 +455,25 @@
 							return;
 						}
 						chapter_id-=1;
-						getChapterContent(chapter_id,UIcallback);
-						Util.StorageSetter('cid',chapter_id);
-					}
+						getChapterContentPromise().then(function(data){
+							UIcallback&&UIcallback();
+						});
+						//getChapterContent(chapter_id,UIcallback);
+
+						Util.StorageSetter("cid",chapter_id);
+					};
 					var nextChapter=function(UIcallback){
 						chapter_id=parseInt(chapter_id,10);
 						if(chapter_id==3){
 							return;
 						}
 						chapter_id+=1;
-						getChapterContent(chapter_id,UIcallback);
-						Util.StorageSetter('cid',chapter_id);
-					}
+						getChapterContentPromise().then(function(data){
+							UIcallback&&UIcallback();
+						});
+						//getChapterContent(chapter_id,UIcallback);
+						Util.StorageSetter("cid",chapter_id);
+					};
 					return {
 						init:init,
 						prevChapter:prevChapter,
@@ -475,9 +483,9 @@
 				function KiindleBaseFrame(container){
 					function parseChapterData(jsonData){
 						var jsonObj=JSON.parse(jsonData);
-						var html='<h4>'+jsonObj.t+'</h4>';
+						var html="<h4>"+jsonObj.t+"</h4>";
 						for(var i=0;i<jsonObj.p.length;i++){
-							html+='<p>'+jsonObj.p[i]+'</p>';
+							html+="<p>"+jsonObj.p[i]+"</p>";
 						}
 						return html;
 					}
@@ -486,84 +494,84 @@
 					}	
 				}
 				function EventHandler(){
-					$('.m_layer').click(function(){
-						if(dom.topNav.css('display')=='none'){
+					$(".m_layer").click(function(){
+						if(dom.topNav.css("display")=="none"){
 							dom.topNav.show();
 							dom.bottomNav.show();
 							dom.navPanel.hide();
-							dom.fontIcon.removeClass('current');
+							dom.fontIcon.removeClass("current");
 						}else{
 							dom.topNav.hide();
 							dom.bottomNav.hide();
 							dom.navPanel.hide();
-							dom.fontIcon.removeClass('current');
+							dom.fontIcon.removeClass("current");
 						}
 					});
 					win.scroll(function(){
 						dom.topNav.hide();
 						dom.bottomNav.hide();
 						dom.navPanel.hide();
-						dom.fontIcon.removeClass('current');
+						dom.fontIcon.removeClass("current");
 					});
 
 					dom.fontStyle.click(function(){
-						if(dom.navPanel.css('display')=='none'){
+						if(dom.navPanel.css("display")=="none"){
 							dom.navPanel.show();
-							dom.fontIcon.addClass('current');
+							dom.fontIcon.addClass("current");
 						}else{
 							dom.navPanel.hide();
-							dom.fontIcon.removeClass('current');
+							dom.fontIcon.removeClass("current");
 						}
 					});
 					dom.nightMode.click(function(){
-						if(dom.dayModeIcon.css('display')=='none'){
+						if(dom.dayModeIcon.css("display")=="none"){
 							dom.dayModeIcon.show();
 							dom.dayTitle.show();
 							dom.nightModeIcon.hide();
 							dom.nightTitle.hide();
-							body.css('background-color','rgb(15,20,16)');
-							Util.StorageSetter('isNightMode',1);
+							body.css("background-color","rgb(15,20,16)");
+							Util.StorageSetter("isNightMode",1);
 						}else{
 							dom.dayModeIcon.hide();
 							dom.dayTitle.hide();
 							dom.nightModeIcon.show();
 							dom.nightTitle.show();
-							body.css('background-color',bgCurrent);
-							Util.StorageSetter('isNightMode',0);
+							body.css("background-color",bgCurrent);
+							Util.StorageSetter("isNightMode",0);
 						}
 					});
-					$('#largeFont').click(function(){
+					$("#largeFont").click(function(){
 						if(initFontSize>20){
 							return;
 						}
 						initFontSize+=1;
-						chapterContainer.css('font-size',initFontSize);
-						Util.StorageSetter('font_size',initFontSize);
+						chapterContainer.css("font-size",initFontSize);
+						Util.StorageSetter("font_size",initFontSize);
 
 					});
-					$('#smallFont').click(function(){
+					$("#smallFont").click(function(){
 						if(initFontSize<12){
 							return;
 						}
 						initFontSize-=1;
-						chapterContainer.css('font-size',initFontSize);
-						Util.StorageSetter('font_size',initFontSize);
+						chapterContainer.css("font-size",initFontSize);
+						Util.StorageSetter("font_size",initFontSize);
 					});
-					$('.bg_container').click(function(){
+					$(".bg_container").click(function(){
 						var index=parseInt($(this).attr("class").substr(-1))-1;
-						body.css('background-color',bgColor[index]);
-						$('.child_mod').find('.bg_current').removeClass('bg_current');
-						$(this).find('div').addClass('bg_current');
-						Util.StorageSetter('bgColor',bgColor[index]);
-						Util.StorageSetter('index',index+1);
+						body.css("background-color",bgColor[index]);
+						$(".child_mod").find(".bg_current").removeClass("bg_current");
+						$(this).find("div").addClass("bg_current");
+						Util.StorageSetter("bgColor",bgColor[index]);
+						Util.StorageSetter("index",index+1);
 					});
 
-					$('#prev_button').click(function(){
+					$("#prev_button").click(function(){
 						kiindleModel.prevChapter(function(data){
 							readerUI(data);
 						});
 					});
-					$('#next_button').click(function(){
+					$("#next_button").click(function(){
 						kiindleModel.nextChapter(function(data){
 							readerUI(data);
 						});

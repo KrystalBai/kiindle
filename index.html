@@ -415,7 +415,7 @@
 					function parseChapterData(jsonData){
 						var jsonObj=JSON.parse(jsonData);
 						var html='<h4>'+jsonObj.t+'</h4>';
-						for(var i=0;i<jsonObj.length;i++){
+						for(var i=0;i<jsonObj.p.length;i++){
 							html+='<p>'+jsonObj.p[i]+'</p>';
 						}
 						return html;

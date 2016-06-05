@@ -235,13 +235,7 @@
 		    	<div class="nav_title">返回书架</div>
 		    </div>
 		    <div id="chapter_container" class="m_reader_content">
-		        <h4>Lorem Ipsum</h4>
-		        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-		    	<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-		    	<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-		    	<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-		    	<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-		    	<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+		        
 		    </div>
 		    <div class="m_button_bar">
 		        <ul class="u_tab">
@@ -323,7 +317,7 @@
 								debugger
 								var data=$.base64.decode(result);
 								var json=decodeURIComponent(escape(data));
-								callback(result);
+								callback(json);
 							}
 						});
 					}
@@ -381,16 +375,19 @@
 
 				function main(){
 					var kiindleModel=KiindleModel();
-					kiindleModel.init();
+					var readerUI=KiindleBaseFrame(chapterContainer);
+					kiindleModel.init(function(data){
+						readerUI(data);
+					});
 					EventHandler();
 				}
 
 				function KiindleModel(){
 					var chapter_id;
-					var init=function(){
+					var init=function(UIcallback){
 						getChapterInfo(function(){
-							getChapterContent(chapter_id,function(){
-
+							getChapterContent(chapter_id,function(data){
+								UIcallback&&UIcallback(data);
 							});
 						})
 					}
@@ -400,7 +397,7 @@
 							callback&&callback();
 						},'json');
 					}
-					var getChapterContent=function(chapter_id){
+					var getChapterContent=function(chapter_id,callback){
 						$.get('./data/data'+chapter_id+'.json',function(data){
 							if(data.result==0){
 								var url=data.jsonp;
@@ -414,8 +411,18 @@
 						init:init
 					}
 				}
-				function KiindleBaseFrame(){
-
+				function KiindleBaseFrame(container){
+					function parseChapterData(jsonData){
+						var jsonObj=JSON.parse(jsonData);
+						var html='<h4>'+jsonObj.t+'</h4>';
+						for(var i=0;i<jsonObj.length;i++){
+							html+='<p>'+jsonObj.p[i]+'</p>';
+						}
+						return html;
+					}
+					return function(data){
+						container.html(parseChapterData(data));
+					}	
 				}
 				function EventHandler(){
 					$('.m_layer').click(function(){

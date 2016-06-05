@@ -456,7 +456,7 @@
 						}
 						chapter_id-=1;
 						getChapterContentPromise().then(function(data){
-							UIcallback&&UIcallback();
+							UIcallback&&UIcallback(data);
 						});
 						//getChapterContent(chapter_id,UIcallback);
 
@@ -469,7 +469,7 @@
 						}
 						chapter_id+=1;
 						getChapterContentPromise().then(function(data){
-							UIcallback&&UIcallback();
+							UIcallback&&UIcallback(data);
 						});
 						//getChapterContent(chapter_id,UIcallback);
 						Util.StorageSetter("cid",chapter_id);

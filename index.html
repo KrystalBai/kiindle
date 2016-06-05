@@ -411,7 +411,7 @@
 							if(data.result==0){
 								chapter_id=cid;
 								totalChapter=data.chapters.length;
-								resolve();
+								resolve(data);
 							}else{
 								reject({msg:"fail"});
 							}

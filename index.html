@@ -569,11 +569,13 @@
 					$("#prev_button").click(function(){
 						kiindleModel.prevChapter(function(data){
 							readerUI(data);
+							body.scrollTop( 0 );
 						});
 					});
 					$("#next_button").click(function(){
 						kiindleModel.nextChapter(function(data){
 							readerUI(data);
+							body.scrollTop( 0 );
 						});
 					});
 				}
